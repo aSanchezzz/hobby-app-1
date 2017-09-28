@@ -39,6 +39,9 @@ if __name__ == "__main__":
   tornado.log.enable_pretty_logging()
   
   app = make_app()
-  app.listen(8888)
+  app.listen(8888, print('Server started on localhost:8888'))
   tornado.ioloop.IOLoop.current().start()
   
+# request = YouTooHandler(request_info)
+# request.get()
+
