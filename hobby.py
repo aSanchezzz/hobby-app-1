@@ -5,8 +5,13 @@ import tornado.ioloop
 import tornado.web
 import tornado.log
 
+from dotenv import load_dotenv
+
 from jinja2 import \
   Environment, PackageLoader, select_autoescape
+
+
+load_dotenv('.env')
 
 PORT = int(os.environ.get('PORT', '8888'))
 
