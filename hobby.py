@@ -28,6 +28,13 @@ class MainHandler(TemplateHandler):
     self.render_template("hello.html", {'names': names, 'amount': 42.55})
 
 class PageHandler(TemplateHandler):
+  def post (self, page):
+    email = self.get_body_argument('email')
+    
+    # self.write('Thanks got your data<br>')
+    # self.write('Email: ' + email)
+    self.redirect('/thank-you-for-submitting')
+    
   def get(self, page):
     self.set_header(
       'Cache-Control',
